@@ -1,4 +1,4 @@
-# Community Portal — User Manual
+#Munhu Wese Community Portal — User Manual
 
 This user manual describes how to use the Community Portal app (Next.js frontend + Express + Prisma backend).
 
@@ -40,16 +40,16 @@ From here you can navigate to create or edit posts and view event details.
 3. Submit — the post will appear in the feed.
 
 ### Edit / Delete a Post
-You can only edit or delete posts you created (or if your role is admin).
+You can only edit or delete posts you created .
 
 ### Create an Event (Admin)
-1. Log in as an admin (role must be 'admin').
+1. Log in as an admin (role must be 'admin' and this can be done manually).
 2. Click `Create Event` in dashboard.
 3. Fill title, description, location, start and end times, optional image.
 
 ### Register for an Event
 1. Open the event details page.
-2. Click `Register` — you will receive a confirmation email (or console log if SMTP not configured).
+2. Click `Register` then an event will be successfully registered and becomes visible to everyone.
 
 ---
 

@@ -21,6 +21,7 @@ model User {
   likes          PostLike[]
   createdEvents  Event[]              @relation("EventCreator")
   createdAt      DateTime             @default(now())
+  comments       Comment[]
 }
 
 model Post {
@@ -84,9 +85,4 @@ model Comment {
   createdAt DateTime @default(now())
 
   @@index([postId])
-}
-
-model User{
-  // ...other fields...
-  comments Comment[]
 }

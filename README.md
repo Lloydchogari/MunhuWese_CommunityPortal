@@ -2,7 +2,7 @@ Community Portal (Full-Stack Application)
 
 
 
-This repository contains a full-stack community portal application built with a Next.js frontend and a Node.js/Express backend.
+This repository contains a full-stack community portal application built with a Next.js frontend and a Node.js/Express backend. The app is called Munhu Wese.
 
 ## Technology Stack
 
@@ -11,11 +11,11 @@ This repository contains a full-stack community portal application built with a 
 # Community Portal — Full-stack submission
 
 
-Community Portal
+Munhu Wese App
 An example full-stack application 
 
 This repo contains a Next.js frontend and an Express + Prisma backend with
-Postgres. The application supports users, posts, and events along with image
+Postgres and it is a typescript app. The application supports users, posts, and events along with image
 uploads, email notifications (SMTP or console fallback), and full test coverage
 for backend features.
 
@@ -24,7 +24,7 @@ for backend features.
 Table of contents
 
 - Features
-- User manual (separate): `USER_MANUAL.md` — detailed usage & API examples
+- User manual (separate): `USER_MANUAL.md` —  detailed usage & API examples
 - Quick start (Docker)
 - Local dev (frontend + backend)
 - Environment variables
@@ -43,7 +43,7 @@ Table of contents
 - Dashboard with posts + upcoming events
 - Posts: add / edit / delete with optional image uploads
 - Events: full CRUD + user registrations
-- Email notifications: password reset and event registration (SMTP or console)
+- **Email notifications:** Password reset and event registration confirmation (Gmail SMTP)
 - Robust backend tests (Jest + ts-jest) — passing locally
 
 ---
@@ -120,12 +120,21 @@ DATABASE_URL="postgresql://username:password@localhost:5432/community_portal?sch
 # JWT & app
 JWT_SECRET=super-secret-test-key
 CLIENT_URL=http://localhost:3000
+PORT=4000
+NODE_ENV=development
 
-# Email (optional: Mailtrap or real SMTP)
-EMAIL_HOST=smtp.mailtrap.io
-EMAIL_USER=mailtrap_user
-EMAIL_PASS=mailtrap_pass
+# Email (Gmail SMTP)
+# Get Gmail App Password from: https://myaccount.google.com/apppasswords
+GMAIL_USER="your-email@gmail.com"
+GMAIL_APP_PASSWORD="your-16-character-app-password"
 ```
+
+**Gmail Setup Quick Guide:**
+1. Enable 2-Factor Authentication on your Gmail account
+2. Generate an App Password at https://myaccount.google.com/apppasswords
+3. Set `GMAIL_USER` to your Gmail address and `GMAIL_APP_PASSWORD` to the 16-char password
+
+See [`GMAIL_SETUP.md`](./GMAIL_SETUP.md) for detailed instructions.
 
 Frontend (`frontend/.env.local`):
 
@@ -176,7 +185,7 @@ Notes:
 
 ## Project status & deliverables
 
-Completed (as of this submission):
+Completed (what we have):
 
 - User registration, login, password reset (with email util)
 - Profile editing (including image uploads)
@@ -184,12 +193,6 @@ Completed (as of this submission):
 - Events CRUD + event registration + registration confirmation emails
 - Prisma migrations and generated client (regenerated after cleanup)
 - Backend tests (Jest) — passing
-
-Remaining / Optional (nice-to-have but not required for submission):
-
-- Expand frontend automated tests & end-to-end tests
-- Add CI / GitHub Actions (recommended)
-- Containerization and streamlined dev scripts (Docker compose included)
 
 ---
 

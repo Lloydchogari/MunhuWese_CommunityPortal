@@ -111,4 +111,81 @@ router.post('/:id/like', authRequired, async (req: AuthRequest, res) => {
   }
 });
 
+// COMMENTS
+// Get comments for a post
+router.get('/:id/comments', async (req, res) => {
+  const postId = Number(req.params.id);
+  try {
+    const comments = await prisma.comment.findMany({
+      where: { postId },
+      orderBy: { createdAt: 'asc' },
+      include: { author: { select: { id: true, name: true, profileImage: true } } },
+    });
+    res.json(comments);
+  } catch (err) {
+    console.error('Failed to get comments', err);
+    res.status(500).json({ message: 'Failed to get comments' });
+  }
+});
+
+// Create a comment for a post
+router.post('/:id/comments', authRequired, async (req: AuthRequest, res) => {
+  const postId = Number(req.params.id);
+  const { content } = req.body;
+  if (!content || typeof content !== 'string' || content.trim().length < 1) return res.status(400).json({ message: 'Content is required' });
+
+  try {
+    const post = await prisma.post.findUnique({ where: { id: postId } });
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+
+    const comment = await prisma.comment.create({
+      data: {
+        content: content.trim(),
+        authorId: req.user!.id,
+        postId,
+      },
+      include: { author: { select: { id: true, name: true, profileImage: true } } },
+    });
+    res.status(201).json(comment);
+  } catch (err) {
+    console.error('Failed to create comment', err);
+    res.status(500).json({ message: 'Failed to create comment' });
+  }
+});
+
+// Update a comment
+router.put('/comments/:commentId', authRequired, async (req: AuthRequest, res) => {
+  const commentId = Number(req.params.commentId);
+  const { content } = req.body;
+  if (!content || typeof content !== 'string' || content.trim().length < 1) return res.status(400).json({ message: 'Content is required' });
+
+  try {
+    const existing = await prisma.comment.findUnique({ where: { id: commentId } });
+    if (!existing) return res.status(404).json({ message: 'Comment not found' });
+    if (existing.authorId !== req.user!.id && req.user!.role !== 'admin') return res.status(403).json({ message: 'Not allowed' });
+
+    const updated = await prisma.comment.update({ where: { id: commentId }, data: { content: content.trim() }, include: { author: { select: { id: true, name: true, profileImage: true } } } });
+    res.json(updated);
+  } catch (err) {
+    console.error('Failed to update comment', err);
+    res.status(500).json({ message: 'Failed to update comment' });
+  }
+});
+
+// Delete a comment
+router.delete('/comments/:commentId', authRequired, async (req: AuthRequest, res) => {
+  const commentId = Number(req.params.commentId);
+  try {
+    const existing = await prisma.comment.findUnique({ where: { id: commentId } });
+    if (!existing) return res.status(404).json({ message: 'Comment not found' });
+    if (existing.authorId !== req.user!.id && req.user!.role !== 'admin') return res.status(403).json({ message: 'Not allowed' });
+
+    await prisma.comment.delete({ where: { id: commentId } });
+    res.status(204).send();
+  } catch (err) {
+    console.error('Failed to delete comment', err);
+    res.status(500).json({ message: 'Failed to delete comment' });
+  }
+});
+
 export default router;

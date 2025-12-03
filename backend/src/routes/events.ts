@@ -3,7 +3,7 @@ import { prisma } from '../prisma.js';
 import multer from 'multer';
 import path from 'path';
 import { authRequired, requireRole, AuthRequest, authOptional } from '../middleware/auth.js';
-import { sendEventRegistrationEmail } from '../utils/email.js';
+import { sendEventRegistrationEmail } from '../services/emailService.js';
 
 const router = Router();
 
@@ -150,12 +150,26 @@ router.post('/:id/register', authRequired, async (req: AuthRequest, res) => {
       },
     });
 
+    // Send confirmation email with full event details
     const user = await prisma.user.findUnique({ where: { id: req.user!.id } });
     if (user) {
       try {
-        await sendEventRegistrationEmail(user.email, event.title);
+        const emailResult = await sendEventRegistrationEmail({
+          to: user.email,
+          userName: user.name,
+          eventTitle: event.title,
+          eventDescription: event.description,
+          eventLocation: event.location,
+          eventStartAt: event.startAt.toISOString(),
+          eventEndAt: event.endAt.toISOString(),
+        });
+        if (emailResult.success) {
+          console.log('✅ Event registration email sent successfully to:', user.email);
+        } else {
+          console.error('❌ Event registration email failed:', emailResult.error);
+        }
       } catch (emailError) {
-        console.error('Failed to send registration email:', emailError);
+        console.error('❌ Exception sending event registration email:', emailError);
       }
     }
 
@@ -175,7 +189,7 @@ router.get('/:id/registrations', authRequired, requireRole('admin'), async (req:
       where: { eventId },
       include: {
         user: {
-          select: { id: true, name: true, email: true },
+          select: { id: true, name: true, email: true, profileImage: true },
         },
       },
       orderBy: { createdAt: 'desc' },

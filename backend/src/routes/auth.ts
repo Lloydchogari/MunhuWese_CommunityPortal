@@ -2,6 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../prisma.js';
+import { sendPasswordResetEmail } from '../services/emailService.js';
 
 const router = Router();
 
@@ -62,22 +63,26 @@ router.post('/login', async (req, res) => {
   });
 });
 
-// Minimal mock password reset endpoints
+// Password reset request with Gmail
 router.post('/reset-request', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ message: 'Email required' });
 
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) return res.json({ message: 'If this email exists, a reset link was sent' });
+  if (!user) {
+    // Return success even if user doesn't exist (security best practice)
+    return res.json({ message: 'If this email exists, a reset link was sent' });
+  }
 
-  // create a short-lived reset token
+  // Create a short-lived reset token
   const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
-  // send email (real if configured, otherwise mocked)
+  
+  // Send email with Gmail SMTP
   try {
-    const { sendPasswordResetEmail } = await import('../utils/email.js');
-    await sendPasswordResetEmail(user.email, token);
+    await sendPasswordResetEmail(user.email, token, user.name);
+    console.log('✅ Password reset email sent to:', user.email);
   } catch (err) {
-    console.error('failed to send password reset email', err);
+    console.error('❌ Failed to send password reset email:', err);
   }
 
   return res.json({ message: 'If this email exists, a reset link was sent' });

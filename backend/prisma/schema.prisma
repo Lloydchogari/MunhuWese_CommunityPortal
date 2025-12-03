@@ -32,6 +32,7 @@ model Post {
   authorId    Int
   createdAt   DateTime  @default(now())
   likes       PostLike[]
+  comments    Comment[]
 }
 
 model Event {
@@ -71,4 +72,16 @@ model PostLike {
   createdAt DateTime @default(now())
 
   @@unique([userId, postId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
+  createdAt DateTime @default(now())
+
+  @@index([postId])
 }

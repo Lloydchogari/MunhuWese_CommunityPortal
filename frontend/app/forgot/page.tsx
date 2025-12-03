@@ -36,8 +36,8 @@ export default function ForgotPage() {
             <div className="p-8 md:p-12 flex flex-col justify-center">
               <h1 className="text-2xl font-bold text-black mb-3">Reset password</h1>
               <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-md">
-                <input className="input" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" required />
-                <button className="button button--primary" type="submit">Send</button>
+                <input className="input text-black" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" required />
+                <button className="button button--primary bg-gray-800 text-white hover:bg-gray-700" type="submit">Send</button>
               </form>
               {message && <p className="mt-3 text-sm text-gray-700">{message}</p>}
             </div>

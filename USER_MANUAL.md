@@ -37,7 +37,7 @@ From here you can navigate to create or edit posts and view event details.
 ### Create a Post
 1. Click 'New Post' or 'Create Post'.
 2. Enter Title and Description (both must meet minimum lengths), optional image.
-3. Submit — the post will appear in the feed.
+3. Submit then the post will appear in the feed.
 
 ### Edit / Delete a Post
 You can only edit or delete posts you created .
